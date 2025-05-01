@@ -43,20 +43,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PanGestureAppPreview() {
-   PanGestureApp()
-}
-
 @Composable
 fun PanGestureApp(modifier: Modifier = Modifier) {
     ImageWithPan(modifier = modifier)
 }
+
+@Preview(showBackground = true)
+@Composable
+fun PanGestureAppPreview() {
+    PanGestureApp()
+}
+
 @Composable
 fun ImageWithPan(modifier: Modifier = Modifier) {
     var offset by remember { mutableStateOf(Offset.Zero) }
-    // Zooming the image to show the pan effect
+    // Starts with a magnified image to show the pan effect
     val zoom = 2f
 
     Image(painter = painterResource(id = R.drawable.sample_image_dog),
@@ -81,12 +82,12 @@ fun ImageWithPan(modifier: Modifier = Modifier) {
 fun Offset.calculatePanOffset(
     pan: Offset, zoom: Float, size: IntSize
 ): Offset {
-    // Calculate the new offset by subtracting the pan from the current offset
-    val newOffset = this-pan
-    // Calculate the maximum allowed offset in X and Y directions
-    // based on the size of the image and the zoom level
-    val maxOffsetX = size.width * (zoom-1f)
-    val maxOffsetY = size.height * (zoom-1f)
-    // Constrain the new offset within the valid range
+    // Subtracts pan offset from new offset
+    val newOffset = this - pan
+
+    // Calculates maxOffset to keep the transformed image within visible bounds
+    val maxOffsetX = size.width * (zoom - 1f)
+    val maxOffsetY = size.height * (zoom - 1f)
+
     return Offset(newOffset.x.coerceIn(0f, maxOffsetX), newOffset.y.coerceIn(0f, maxOffsetY))
 }
